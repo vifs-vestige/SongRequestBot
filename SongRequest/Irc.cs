@@ -20,7 +20,6 @@ namespace SongRequest
         private TcpClient IrcConnection = null;
         private char[] ChatSeperator = { ' ' };
         private static Thread ReadStreamThread;
-        private bool IsLineRead = true;
         private string IrcInput = "";
         public Queue<Message> Messeages = new Queue<Message>();
 
@@ -32,8 +31,8 @@ namespace SongRequest
 
         private void Connect(string channel, string nick, string password)
         {
-            if (!nick.StartsWith("#"))
-                nick = "#" + nick;
+            if (!channel.StartsWith("#"))
+                channel = "#" + channel;
             try
             {
                 IrcConnection = new TcpClient(Server, Port);
@@ -45,8 +44,12 @@ namespace SongRequest
                 DataSend("USER", nick);
                 DataSend("JOIN", channel);
                 //DataSend("jtvclient", null);
-                
 
+
+                //var timer = new DispatcherTimer();
+                //timer.Interval = TimeSpan.FromMilliseconds(200);
+                //timer.Tick += StreamReader;
+                //timer.Start();
                 ReadStreamThread = new Thread(new ThreadStart(this.StreamReader));
                 ReadStreamThread.Start();
             }
@@ -74,9 +77,7 @@ namespace SongRequest
                 Console.WriteLine("Uh-Oh");
             }
         }
-
         
-
         public void StreamReader()
         {
             while (true)
